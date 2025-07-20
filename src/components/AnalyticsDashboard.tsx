@@ -6,9 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, BarChart3, TrendingUp, GitCompareIcon } from 'lucide-react';
+import { CalendarIcon, BarChart3, TrendingUp, GitCompareIcon, Mail, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { MultiSelect } from './MultiSelect';
+import amazonLogo from '@/assets/amazon-logo.svg';
 
 // Metric definitions
 const SCORECARD_METRICS = {
@@ -44,8 +46,9 @@ const DIMENSIONS = ['Overall', 'Use_case', 'Sub_usecase'];
 
 export const AnalyticsDashboard = () => {
   const [selectedScorecard, setSelectedScorecard] = useState<string>('');
-  const [selectedMetric, setSelectedMetric] = useState<string>('');
-  const [selectedDimension, setSelectedDimension] = useState<string>('Overall');
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+  const [selectedDimensions, setSelectedDimensions] = useState<string[]>(['Overall']);
+  const [userEmail, setUserEmail] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [compareStartDate, setCompareStartDate] = useState<Date>();
@@ -54,12 +57,12 @@ export const AnalyticsDashboard = () => {
 
   const handleScorecardChange = (value: string) => {
     setSelectedScorecard(value);
-    setSelectedMetric(''); // Reset metric when scorecard changes
+    setSelectedMetrics([]); // Reset metrics when scorecard changes
   };
 
   const handleAnalyze = () => {
-    if (!selectedScorecard || !selectedMetric || !startDate || !endDate) {
-      alert('Please fill in all required fields');
+    if (!selectedScorecard || selectedMetrics.length === 0 || !startDate || !endDate || !userEmail) {
+      alert('Please fill in all required fields including email');
       return;
     }
 
@@ -68,11 +71,19 @@ export const AnalyticsDashboard = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userEmail)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
     // Here you would normally send the data to your backend
     console.log('Analysis Parameters:', {
       scorecard: selectedScorecard,
-      metric: selectedMetric,
-      dimension: selectedDimension,
+      metrics: selectedMetrics,
+      dimensions: selectedDimensions,
+      userEmail: userEmail,
       periodStart: startDate,
       periodEnd: endDate,
       compareStart: compareStartDate,
@@ -80,7 +91,7 @@ export const AnalyticsDashboard = () => {
       enableComparison
     });
 
-    alert('Analysis request submitted! (Backend integration needed)');
+    alert(`Analysis request submitted! Results will be sent to ${userEmail} (Backend integration needed)`);
   };
 
   const getAvailableMetrics = () => {
@@ -88,99 +99,132 @@ export const AnalyticsDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-foreground flex items-center justify-center gap-3">
-            <BarChart3 className="text-primary" />
-            Analytics Dashboard
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Compare metrics across different time periods and dimensions
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-primary/5">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Header with Amazon Branding */}
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-4">
+            <img src={amazonLogo} alt="Amazon" className="h-12 w-auto" />
+            <div className="h-8 w-px bg-muted-foreground/30"></div>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-primary/10">
+                <BarChart3 className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+                <p className="text-muted-foreground">Powered by Amazon Pay</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Compare metrics across different time periods and dimensions with comprehensive data analysis
           </p>
         </div>
 
         {/* Main Form */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="text-primary" />
-              Analysis Parameters
+        <Card className="shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-lg">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 rounded-full bg-primary/20">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              Analysis Configuration
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Row 1: Scorecard and Metric */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="scorecard">Scorecard Type *</Label>
-                <Select value={selectedScorecard} onValueChange={handleScorecardChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select scorecard type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Topline TXN Scorecard">Topline TXN Scorecard</SelectItem>
-                    <SelectItem value="Topline TPV Scorecard">Topline TPV Scorecard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="metric">Select Metric *</Label>
-                <Select 
-                  value={selectedMetric} 
-                  onValueChange={setSelectedMetric}
-                  disabled={!selectedScorecard}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select metric" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getAvailableMetrics().map((metric) => (
-                      <SelectItem key={metric} value={metric}>
-                        {metric}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          <CardContent className="p-8 space-y-8">
+            {/* User Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-base font-semibold flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                Email Address *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email for results notification"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                className="text-base h-12"
+              />
+              <p className="text-sm text-muted-foreground">
+                Analysis results will be sent to this email address
+              </p>
             </div>
 
-            {/* Row 2: Dimension */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="dimension">Dimension</Label>
-                <Select value={selectedDimension} onValueChange={setSelectedDimension}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select dimension" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DIMENSIONS.map((dimension) => (
-                      <SelectItem key={dimension} value={dimension}>
-                        {dimension}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Row 1: Scorecard Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="scorecard" className="text-base font-semibold flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                Scorecard Type *
+              </Label>
+              <Select value={selectedScorecard} onValueChange={handleScorecardChange}>
+                <SelectTrigger className="h-12 text-base">
+                  <SelectValue placeholder="Select scorecard type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Topline TXN Scorecard">Topline TXN Scorecard</SelectItem>
+                  <SelectItem value="Topline TPV Scorecard">Topline TPV Scorecard</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Row 3: Primary Date Range */}
+            {/* Row 2: Metrics Multi-Selection */}
+            <div className="space-y-2">
+              <Label className="text-base font-semibold flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                Select Metrics * (Multiple Selection Available)
+              </Label>
+              <MultiSelect
+                options={getAvailableMetrics()}
+                selected={selectedMetrics}
+                onSelectionChange={setSelectedMetrics}
+                placeholder="Select metrics to analyze"
+                disabled={!selectedScorecard}
+              />
+              <p className="text-sm text-muted-foreground">
+                {selectedMetrics.length > 0 
+                  ? `${selectedMetrics.length} metric${selectedMetrics.length > 1 ? 's' : ''} selected`
+                  : 'Select one or more metrics based on your scorecard choice'
+                }
+              </p>
+            </div>
+
+            {/* Row 3: Dimensions Multi-Selection */}
+            <div className="space-y-2">
+              <Label className="text-base font-semibold flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Dimensions (Multiple Selection Available)
+              </Label>
+              <MultiSelect
+                options={DIMENSIONS}
+                selected={selectedDimensions}
+                onSelectionChange={setSelectedDimensions}
+                placeholder="Select dimensions for analysis"
+              />
+              <p className="text-sm text-muted-foreground">
+                {selectedDimensions.length > 0 
+                  ? `${selectedDimensions.length} dimension${selectedDimensions.length > 1 ? 's' : ''} selected`
+                  : 'Choose how to break down your analysis'
+                }
+              </p>
+            </div>
+
+            {/* Primary Date Range */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Primary Period</h3>
+              <h3 className="text-lg font-semibold border-l-4 border-primary pl-4">Primary Analysis Period</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label>Start Date *</Label>
+                  <Label className="text-base font-medium">Start Date *</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal",
+                          "w-full justify-start text-left font-normal h-12 text-base",
                           !startDate && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-3 h-5 w-5" />
                         {startDate ? format(startDate, "PPP") : "Pick start date"}
                       </Button>
                     </PopoverTrigger>
@@ -197,17 +241,17 @@ export const AnalyticsDashboard = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>End Date *</Label>
+                  <Label className="text-base font-medium">End Date *</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal",
+                          "w-full justify-start text-left font-normal h-12 text-base",
                           !endDate && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-3 h-5 w-5" />
                         {endDate ? format(endDate, "PPP") : "Pick end date"}
                       </Button>
                     </PopoverTrigger>
@@ -227,37 +271,37 @@ export const AnalyticsDashboard = () => {
 
             {/* Comparison Toggle */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 p-4 bg-accent/10 rounded-lg">
                 <input
                   type="checkbox"
                   id="enableComparison"
                   checked={enableComparison}
                   onChange={(e) => setEnableComparison(e.target.checked)}
-                  className="rounded border-gray-300"
+                  className="w-5 h-5 text-primary bg-background border-2 border-muted rounded focus:ring-primary focus:ring-2"
                 />
-                <Label htmlFor="enableComparison" className="flex items-center gap-2">
-                  <GitCompareIcon className="h-4 w-4" />
-                  Enable Date Comparison
+                <Label htmlFor="enableComparison" className="text-base font-medium flex items-center gap-2 cursor-pointer">
+                  <GitCompareIcon className="h-5 w-5 text-primary" />
+                  Enable Period Comparison Analysis
                 </Label>
               </div>
 
               {/* Comparison Date Range */}
               {enableComparison && (
-                <div className="space-y-4 p-4 bg-accent rounded-lg">
-                  <h3 className="text-lg font-semibold">Comparison Period</h3>
+                <div className="space-y-4 p-6 bg-gradient-to-r from-accent/10 to-primary/5 rounded-lg border border-accent/20">
+                  <h3 className="text-lg font-semibold border-l-4 border-accent pl-4">Comparison Period</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label>Compare Start Date</Label>
+                      <Label className="text-base font-medium">Compare Start Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-normal",
+                              "w-full justify-start text-left font-normal h-12 text-base",
                               !compareStartDate && "text-muted-foreground"
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-3 h-5 w-5" />
                             {compareStartDate ? format(compareStartDate, "PPP") : "Pick start date"}
                           </Button>
                         </PopoverTrigger>
@@ -274,17 +318,17 @@ export const AnalyticsDashboard = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Compare End Date</Label>
+                      <Label className="text-base font-medium">Compare End Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-normal",
+                              "w-full justify-start text-left font-normal h-12 text-base",
                               !compareEndDate && "text-muted-foreground"
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-3 h-5 w-5" />
                             {compareEndDate ? format(compareEndDate, "PPP") : "Pick end date"}
                           </Button>
                         </PopoverTrigger>
@@ -305,25 +349,29 @@ export const AnalyticsDashboard = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-6">
               <Button 
                 onClick={handleAnalyze}
                 size="lg"
-                className="px-8"
+                className="px-12 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transform hover:scale-105 transition-all duration-200 shadow-lg"
               >
-                Analyze Data
+                <BarChart3 className="mr-3 h-5 w-5" />
+                Run Analysis
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Instructions Card */}
-        <Card className="bg-accent/50">
+        {/* Backend Integration Notice */}
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
           <CardContent className="pt-6">
-            <div className="text-center space-y-2">
-              <h3 className="font-semibold text-accent-foreground">Next Steps</h3>
-              <p className="text-muted-foreground">
-                To enable data processing from your CSV file, please set up the Supabase integration 
+            <div className="text-center space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <Zap className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold text-lg">Ready for Backend Integration</h3>
+              </div>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                To process your CSV data and send analysis results via email, connect your Supabase backend 
                 by clicking the green Supabase button in the top right corner.
               </p>
             </div>
