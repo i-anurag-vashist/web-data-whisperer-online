@@ -111,13 +111,18 @@ export const AnalyticsDashboard = () => {
                 <BarChart3 className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Score Card Builder</h1>
-                <p className="text-muted-foreground">Powered by Amazon Pay Bi Team</p>
+                <h1 className="text-3xl font-bold text-foreground">
+                  Score Card Builder
+                </h1>
+                <p className="text-muted-foreground">
+                  Powered by Amazon Pay BI Team
+                </p>
               </div>
             </div>
           </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Compare metrics across different time periods and dimensions with comprehensive data analysis
+          <p className="text-muted-foreground text-lg whitespace-nowrap overflow-hidden text-ellipsis">
+            Compare metrics across different time periods, dimensions & regions
+            with comprehensive analysis
           </p>
         </div>
 
@@ -134,7 +139,10 @@ export const AnalyticsDashboard = () => {
           <CardContent className="p-8 space-y-8">
             {/* User Email */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-base font-semibold flex items-center gap-2">
+              <Label
+                htmlFor="email"
+                className="text-base font-semibold flex items-center gap-2"
+              >
                 <Mail className="h-4 w-4 text-primary" />
                 Email Address *
               </Label>
@@ -153,17 +161,27 @@ export const AnalyticsDashboard = () => {
 
             {/* Row 1: Scorecard Selection */}
             <div className="space-y-2">
-              <Label htmlFor="scorecard" className="text-base font-semibold flex items-center gap-2">
+              <Label
+                htmlFor="scorecard"
+                className="text-base font-semibold flex items-center gap-2"
+              >
                 <Zap className="h-4 w-4 text-primary" />
-                Scorecard Type *
+                Scorecard Name *
               </Label>
-              <Select value={selectedScorecard} onValueChange={handleScorecardChange}>
+              <Select
+                value={selectedScorecard}
+                onValueChange={handleScorecardChange}
+              >
                 <SelectTrigger className="h-12 text-base">
-                  <SelectValue placeholder="Select scorecard type" />
+                  <SelectValue placeholder="Select scorecard name" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Topline TXN Scorecard">Topline TXN Scorecard</SelectItem>
-                  <SelectItem value="Topline TPV Scorecard">Topline TPV Scorecard</SelectItem>
+                  <SelectItem value="Topline TXN Scorecard">
+                    Topline TXN Scorecard
+                  </SelectItem>
+                  <SelectItem value="Topline TPV Scorecard">
+                    Topline TPV Scorecard
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -182,10 +200,11 @@ export const AnalyticsDashboard = () => {
                 disabled={!selectedScorecard}
               />
               <p className="text-sm text-muted-foreground">
-                {selectedMetrics.length > 0 
-                  ? `${selectedMetrics.length} metric${selectedMetrics.length > 1 ? 's' : ''} selected`
-                  : 'Select one or more metrics based on your scorecard choice'
-                }
+                {selectedMetrics.length > 0
+                  ? `${selectedMetrics.length} metric${
+                      selectedMetrics.length > 1 ? "s" : ""
+                    } selected`
+                  : "Select one or more metrics based on your scorecard choice"}
               </p>
             </div>
 
@@ -202,16 +221,19 @@ export const AnalyticsDashboard = () => {
                 placeholder="Select dimensions for analysis"
               />
               <p className="text-sm text-muted-foreground">
-                {selectedDimensions.length > 0 
-                  ? `${selectedDimensions.length} dimension${selectedDimensions.length > 1 ? 's' : ''} selected`
-                  : 'Choose how to break down your analysis'
-                }
+                {selectedDimensions.length > 0
+                  ? `${selectedDimensions.length} dimension${
+                      selectedDimensions.length > 1 ? "s" : ""
+                    } selected`
+                  : "Choose how to break down your analysis"}
               </p>
             </div>
 
             {/* Primary Date Range */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-l-4 border-primary pl-4">Primary Analysis Period</h3>
+              <h3 className="text-lg font-semibold border-l-4 border-primary pl-4">
+                Primary Analysis Period
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label className="text-base font-medium">Start Date *</Label>
@@ -225,7 +247,9 @@ export const AnalyticsDashboard = () => {
                         )}
                       >
                         <CalendarIcon className="mr-3 h-5 w-5" />
-                        {startDate ? format(startDate, "PPP") : "Pick start date"}
+                        {startDate
+                          ? format(startDate, "PPP")
+                          : "Pick start date"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -279,7 +303,10 @@ export const AnalyticsDashboard = () => {
                   onChange={(e) => setEnableComparison(e.target.checked)}
                   className="w-5 h-5 text-primary bg-background border-2 border-muted rounded focus:ring-primary focus:ring-2"
                 />
-                <Label htmlFor="enableComparison" className="text-base font-medium flex items-center gap-2 cursor-pointer">
+                <Label
+                  htmlFor="enableComparison"
+                  className="text-base font-medium flex items-center gap-2 cursor-pointer"
+                >
                   <GitCompareIcon className="h-5 w-5 text-primary" />
                   Enable Period Comparison Analysis
                 </Label>
@@ -288,10 +315,14 @@ export const AnalyticsDashboard = () => {
               {/* Comparison Date Range */}
               {enableComparison && (
                 <div className="space-y-4 p-6 bg-gradient-to-r from-accent/10 to-primary/5 rounded-lg border border-accent/20">
-                  <h3 className="text-lg font-semibold border-l-4 border-accent pl-4">Comparison Period</h3>
+                  <h3 className="text-lg font-semibold border-l-4 border-accent pl-4">
+                    Comparison Period
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label className="text-base font-medium">Compare Start Date</Label>
+                      <Label className="text-base font-medium">
+                        Compare Start Date
+                      </Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -302,7 +333,9 @@ export const AnalyticsDashboard = () => {
                             )}
                           >
                             <CalendarIcon className="mr-3 h-5 w-5" />
-                            {compareStartDate ? format(compareStartDate, "PPP") : "Pick start date"}
+                            {compareStartDate
+                              ? format(compareStartDate, "PPP")
+                              : "Pick start date"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -318,7 +351,9 @@ export const AnalyticsDashboard = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-base font-medium">Compare End Date</Label>
+                      <Label className="text-base font-medium">
+                        Compare End Date
+                      </Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -329,7 +364,9 @@ export const AnalyticsDashboard = () => {
                             )}
                           >
                             <CalendarIcon className="mr-3 h-5 w-5" />
-                            {compareEndDate ? format(compareEndDate, "PPP") : "Pick end date"}
+                            {compareEndDate
+                              ? format(compareEndDate, "PPP")
+                              : "Pick end date"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -350,7 +387,7 @@ export const AnalyticsDashboard = () => {
 
             {/* Submit Button */}
             <div className="flex justify-center pt-6">
-              <Button 
+              <Button
                 onClick={handleAnalyze}
                 size="lg"
                 className="px-12 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transform hover:scale-105 transition-all duration-200 shadow-lg"
@@ -363,7 +400,7 @@ export const AnalyticsDashboard = () => {
         </Card>
 
         {/* Backend Integration Notice */}
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+        {/* <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
           <CardContent className="pt-6">
             <div className="text-center space-y-3">
               <div className="flex items-center justify-center gap-2">
@@ -376,7 +413,7 @@ export const AnalyticsDashboard = () => {
               </p>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
