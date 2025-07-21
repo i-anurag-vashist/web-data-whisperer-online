@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Check, ChevronDown, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from "react";
+import { Check, ChevronDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 
 interface MultiSelectProps {
   options: string[];
@@ -18,13 +22,13 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   selected,
   onSelectionChange,
   placeholder = "Select options...",
-  disabled = false
+  disabled = false,
 }) => {
   const [open, setOpen] = useState(false);
 
   const toggleOption = (option: string) => {
     const newSelected = selected.includes(option)
-      ? selected.filter(item => item !== option)
+      ? selected.filter((item) => item !== option)
       : [...selected, option];
     onSelectionChange(newSelected);
   };
@@ -38,7 +42,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   const removeSelected = (option: string) => {
-    onSelectionChange(selected.filter(item => item !== option));
+    onSelectionChange(selected.filter((item) => item !== option));
   };
 
   return (
@@ -55,15 +59,15 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             )}
             disabled={disabled}
           >
-            <div className="flex flex-wrap gap-1 max-w-full">
+            <div className="flex flex-wrap gap-1 max-w-full text-black">
               {selected.length === 0 ? (
-                <span className="text-muted-foreground">{placeholder}</span>
+                <span className="text-black">{placeholder}</span>
               ) : selected.length <= 3 ? (
                 selected.map((option) => (
                   <Badge
                     key={option}
                     variant="secondary"
-                    className="text-xs bg-primary/10 text-primary hover:bg-primary/20"
+                    className="text-xs bg-primary/10 !text-black hover:bg-primary/20"
                   >
                     {option}
                     <X
@@ -76,22 +80,25 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                   </Badge>
                 ))
               ) : (
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                <Badge
+                  variant="secondary"
+                  className="bg-primary/10 !text-black"
+                >
                   {selected.length} selected
                 </Badge>
               )}
             </div>
-            <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+            <ChevronDown className="h-4 w-4 shrink-0 opacity-50 text-black" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
-          <div className="p-2 space-y-2">
+        <PopoverContent className="w-full p-0 text-black" align="start">
+          <div className="p-2 space-y-2 text-black">
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={selectAll}
-                className="flex-1 text-xs"
+                className="flex-1 text-xs text-black"
               >
                 Select All
               </Button>
@@ -99,17 +106,17 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={clearAll}
-                className="flex-1 text-xs"
+                className="flex-1 text-xs text-black"
               >
                 Clear All
               </Button>
             </div>
-            <div className="max-h-60 overflow-y-auto">
+            <div className="max-h-60 overflow-y-auto text-black">
               {options.map((option) => (
                 <div
                   key={option}
                   className={cn(
-                    "flex items-center space-x-2 p-2 hover:bg-accent rounded cursor-pointer",
+                    "flex items-center space-x-2 p-2 hover:bg-accent rounded cursor-pointer text-black",
                     selected.includes(option) && "bg-accent"
                   )}
                   onClick={() => toggleOption(option)}
@@ -119,7 +126,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                       <Check className="h-3 w-3 text-primary" />
                     )}
                   </div>
-                  <span className="text-sm">{option}</span>
+                  <span className="text-sm text-black">{option}</span>
                 </div>
               ))}
             </div>

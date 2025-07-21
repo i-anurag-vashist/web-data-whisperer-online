@@ -112,7 +112,7 @@ export const AnalyticsDashboard = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Score Card Builder</h1>
-                <p className="text-muted-foreground">Powered by Amazon Pay</p>
+                <p className="text-muted-foreground">Powered by Amazon Pay Bi Team</p>
               </div>
             </div>
           </div>
