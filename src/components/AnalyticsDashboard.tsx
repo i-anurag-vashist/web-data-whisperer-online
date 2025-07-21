@@ -111,7 +111,7 @@ export const AnalyticsDashboard = () => {
                 <BarChart3 className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+                <h1 className="text-3xl font-bold text-foreground">Score Card Builder</h1>
                 <p className="text-muted-foreground">Powered by Amazon Pay</p>
               </div>
             </div>
@@ -356,7 +356,7 @@ export const AnalyticsDashboard = () => {
                 className="px-12 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transform hover:scale-105 transition-all duration-200 shadow-lg"
               >
                 <BarChart3 className="mr-3 h-5 w-5" />
-                Run Analysis
+                Generate Scorecard
               </Button>
             </div>
           </CardContent>
